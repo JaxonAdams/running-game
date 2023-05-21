@@ -10,6 +10,10 @@ pygame.display.set_caption('Runner')
 # set up game clock
 clock = pygame.time.Clock()
 
+# background music
+music = pygame.mixer.Sound('./audio/music.wav')
+music.play(loops=-1)
+
 # load graphics assets
 sky_surface = pygame.image.load('./graphics/sky.png').convert()
 ground_surface = pygame.image.load('./graphics/ground.png').convert()
