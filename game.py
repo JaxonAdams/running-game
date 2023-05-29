@@ -1,5 +1,15 @@
 import pygame
 
+
+def display_score():
+    current_time = pygame.time.get_ticks() // 1000 - start_time
+
+    score_surf = game_font.render(f'Score: {current_time}', False, (64, 64, 64))
+    score_rect = score_surf.get_rect(center=(400, 50))
+
+    screen.blit(score_surf, score_rect)
+
+
 # initialize pygame
 pygame.init()
 
@@ -7,6 +17,7 @@ pygame.init()
 screen = pygame.display.set_mode((800,400))
 pygame.display.set_caption('Runner')
 game_font = pygame.font.Font('./font/Pixeltype.ttf', 50)
+start_time = 0
 
 # set up game clock
 clock = pygame.time.Clock()
@@ -19,10 +30,6 @@ clock = pygame.time.Clock()
 # load graphics assets
 sky_surface = pygame.image.load('./graphics/sky.png').convert()
 ground_surface = pygame.image.load('./graphics/ground.png').convert()
-
-# score/title
-score_surf = game_font.render('Pixel Runner', False, (64, 64, 64))
-score_rect = score_surf.get_rect(center=(400, 50))
 
 # snail enemy
 snail_surf = pygame.image.load('./graphics/snail/snail1.png').convert_alpha()
@@ -42,12 +49,22 @@ while running:
             running = False
             
         # PLAYER INPUT HANDLING
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and player_rect.bottom == 300:
-                player_gravity = -20
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if player_rect.collidepoint(event.pos) and player_rect.bottom == 300:
-                player_gravity = -20
+        if game_active:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and player_rect.bottom == 300:
+                    player_gravity = -20
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if player_rect.collidepoint(event.pos) and player_rect.bottom == 300:
+                    player_gravity = -20
+        else:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    snail_rect.left = 800
+                    player_rect.bottom = 300
+
+                    start_time = pygame.time.get_ticks() // 1000
+                    game_active = True
+
 
     if game_active:
         # render background
@@ -55,7 +72,8 @@ while running:
         screen.blit(ground_surface, (0, 300))
 
         # score/title
-        screen.blit(score_surf, score_rect)
+        display_score()
+        # screen.blit(score_surf, score_rect)
 
         # render snail enemy
         snail_rect.x -= 4
